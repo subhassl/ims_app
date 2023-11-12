@@ -2,11 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .models import Interactor, ItemCategory, Item
-
-def getInteractorsFromDB():
-    intercators = Interactor.objects.filter(is_active=True).values('id', 'name')
-    return intercators
+from .models import ItemCategory, Item
+from .functions import getInteractorsFromDB
 
 class AuthRequiredApiView(APIView):
     authentication_classes = [TokenAuthentication]  # Specify the authentication class
