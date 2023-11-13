@@ -18,7 +18,7 @@ class ItemCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'item_code', 'is_active', 'category')
+    list_display = ('id', 'name', 'item_code', 'is_active', 'category')
     list_filter = ('is_active', 'category')
     search_fields = ('name', 'item_code')
 
