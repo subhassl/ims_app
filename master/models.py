@@ -9,6 +9,9 @@ class Interactor(models.Model):
     address = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.name
+
 
 class ItemCategory(models.Model):
     name = models.CharField(max_length=20)
@@ -23,6 +26,9 @@ class Item(models.Model):
     item_code = models.CharField(max_length=20, unique=True)
     is_active = models.BooleanField(default=True)
     category = models.ForeignKey(ItemCategory, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
 
 
