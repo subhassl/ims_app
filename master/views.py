@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .models import ItemCategory, Item
-from .functions import getInteractorsFromDB
+from .functions import getInteractorsFromDB, getItemsFromDB
 
 class AuthRequiredApiView(APIView):
     authentication_classes = [TokenAuthentication]  # Specify the authentication class
@@ -43,5 +43,18 @@ class ItemCategoryView(AuthRequiredApiView):
             "count":len(res)
         })
 
+
+class ItemView(AuthRequiredApiView):
+    def get(self, request):
+        items = getItemsFromDB()
+        res_dict = {
+            "values": list(items)
+        }
+
+        return Response(res_dict)
+
+
+
+    
 
 
