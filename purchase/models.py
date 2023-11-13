@@ -9,6 +9,10 @@ class Purchase(models.Model):
     total_quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    def __str__(self):
+        return str(self.id)
+    
+
 class PurchaseLine(models.Model):
     purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE )
@@ -16,5 +20,4 @@ class PurchaseLine(models.Model):
     rate = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
-    def __str__(self):
-        return self.purchase.name
+        
