@@ -4,7 +4,7 @@ from .models import Interactor, ItemCategory, Item
 
 @admin.register(Interactor)
 class IntercatorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone_number','address')
+    list_display = ('id', 'name', 'phone_number','address')
     list_filter =  ('is_active',)
     search_fields = ('name', 'phone_number')
 

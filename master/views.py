@@ -45,6 +45,16 @@ class CreateInteractor(AuthRequiredApiView):
             "id": interactor.id
         } )
 
+class GetItemView(AuthRequiredApiView):
+
+    def get(self, request):
+        item_id = request.GET.get("item_id")
+        item = Item.objects.get(id=item_id)
+        item_res = Item.objects.filter(id=item_id).values('name', 'item_code', 'category')
+        return Response(item_res)
+
+
+
 
 class CreateItem(AuthRequiredApiView):
 
@@ -102,6 +112,33 @@ class ItemView(AuthRequiredApiView):
         }
 
         return Response(res_dict)
+
+
+class UpdateInteractor(AuthRequiredApiView):
+
+    def post(self, request):
+        update_data = request.data
+        interactor = Interactor.objects.get(id=update_data['id'])
+
+        # update the values based on user input
+        new_name = update_data["name"]
+        new_phone_number = update_data["phone_number"]
+        new_address = update_data["address"]
+
+        # update the interactor
+        interactor.name = new_name  
+        interactor.address = new_address
+        interactor.phone_number = new_phone_number  
+
+        interactor.save()
+
+        return Response({
+            "name": interactor.name
+        })
+
+
+
+
 
 
 
