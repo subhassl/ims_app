@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import InteractorView, ItemCategoryView, ItemView, CreateInteractor, CreateItem, UpdateInteractor,  CreateItemCategory, GetItemView
+from .views import InteractorView, ItemCategoryView, ItemView, CreateInteractor, CreateItem, UpdateItem, UpdateInteractor,  CreateItemCategory, GetItemView
 
 
 urlpatterns = [
@@ -10,5 +10,6 @@ urlpatterns = [
     path('item-categories/', ItemCategoryView.as_view(), name='item-category-list'),
     path('create-item/', CreateItem.as_view()),
     path('items/', ItemView.as_view(), name='item-list'),
-    path('get-item/', GetItemView.as_view())
+    path('get-item/', GetItemView.as_view()),
+    path('update-item/', UpdateItem.as_view()),
 ]

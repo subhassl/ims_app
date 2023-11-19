@@ -114,6 +114,27 @@ class ItemView(AuthRequiredApiView):
         return Response(res_dict)
 
 
+class UpdateItem(AuthRequiredApiView):
+    
+    def post(self, request):
+        update_data = request.data
+        item  = Item.objects.get(id=update_data["id"])
+
+        new_name = update_data["name"]
+        new_item_code = update_data["item_code"]
+        new_category_id = update_data["category_id"]
+
+        item.name = new_name
+        item.item_code = new_item_code
+        item.category_id = new_category_id
+
+        item.save()
+
+        return Response({
+            "name": item.name
+        })
+
+
 class UpdateInteractor(AuthRequiredApiView):
 
     def post(self, request):
