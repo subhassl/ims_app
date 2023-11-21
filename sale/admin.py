@@ -9,6 +9,6 @@ class SaleAdmin(admin.ModelAdmin):
 
 @admin.register(SaleLine)
 class SaleLineAdmin(admin.ModelAdmin):
-    list_display = ('id', 'sale', 'item','quantity', 'rate', 'amount',)
+    list_display = ('id', 'item','quantity', 'rate', 'amount',)
     search_fields = ('item', 'Sale ')
 
