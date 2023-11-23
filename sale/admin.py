@@ -3,7 +3,7 @@ from .models import Sale, SaleLine
 
 @admin.register(Sale)
 class SaleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'interactor', 'created_at','created_by', 'total_quantity',)
+    list_display = ('id', 'agent', 'interactor', 'created_at','created_by', 'total_quantity',)
     list_filter =  ('interactor',)
     search_fields = ('interactor', 'created_by')
 

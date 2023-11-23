@@ -4,6 +4,9 @@ from django.db import transaction
 from master.views import AuthRequiredApiView
 from .models import Purchase, PurchaseLine
 from inventory.models import ItemStock 
+from django.db.models import Q
+import json
+import datetime
 
 
 """
@@ -105,3 +108,78 @@ class RetrivePurchaseData(AuthRequiredApiView):
         }
         
         return Response(purchase_dict)
+
+
+# repots based on data range
+
+class FetchPurchaseDataBasedOnDate(AuthRequiredApiView):
+    def post(self, request):
+        try:
+            # Load JSON data from the request body
+            '''
+            1. Json_data now holds a Python dictionary representing 
+            the JSON data sent in the request body.
+
+            '''
+            json_data = json.loads(request.body.decode('utf-8'))
+
+            from_date = json_data.get('from_date', '')
+            end_date = json_data.get('end_date', '')
+
+            # Convert string dates to actual date objects
+            '''
+            strptime method from the datetime module to parse a string (start_date) into a datetime object.
+            Putting it all together, these lines of code take a string representing a date (start_date and end_date) 
+            and convert it into a date object in Python.
+            '''
+            from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+
+            # Fetch purchases within the date range
+            purchases = Purchase.objects.filter(
+                Q(created_at__gte=from_date) &
+                Q(created_at__lte=end_date)
+            )
+
+            # build a list of dictionaries
+            report = []
+            for purchase in purchases:
+                our_data = {
+                    "interactor": purchase.interactor.name,
+                    "total_quantity": purchase.total_quantity,
+                    "total_amount": purchase.total_amount
+                }
+                report.append(our_data)
+
+            res = {}
+            for indv in report:
+                interactor = indv["interactor"] # interactor = pothys
+                if interactor not in res:
+                    res[interactor] = {
+                        "total_quantity": 0,
+                        "total_amount": 0 
+                    }
+                res[interactor]["total_quantity"] += indv["total_quantity"]
+                res[interactor]["total_amount"] += indv["total_amount"]
+
+            res_list = [
+                        {"interactor": key, **value} for key, value in res.items()
+                ]
+
+            
+
+            return Response(
+                 res_list
+            )
+        
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+
+    
+
+
+
+
+
+
+

@@ -4,6 +4,7 @@ from django.db import transaction
 from master.views import AuthRequiredApiView
 from inventory.models import ItemStock 
 from .models import Sale, SaleLine
+from agent.models import Agent 
 
 
 
@@ -14,6 +15,7 @@ class CreateSaleView(AuthRequiredApiView):
         sale_data = request.data
         sale = Sale.objects.create(
             interactor_id=sale_data["interactor_id"],
+            agent_id=sale_data["agent_id"],
             created_by=request.user
         )
 
