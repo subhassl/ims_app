@@ -7,6 +7,7 @@ from inventory.models import ItemStock
 from django.db.models import Q
 import json
 import datetime
+from django.db.models import Sum
 
 
 """
@@ -136,6 +137,8 @@ class FetchPurchaseDataBasedOnDate(AuthRequiredApiView):
             end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
 
             # Fetch purchases within the date range
+            # Q(...): This is a Django object used to encapsulate a query expression.
+            # It's often used when you want to build complex queries with logical operations like AND (&), OR (|), and NOT (~).
             purchases = Purchase.objects.filter(
                 Q(created_at__gte=from_date) &
                 Q(created_at__lte=end_date)
@@ -176,6 +179,33 @@ class FetchPurchaseDataBasedOnDate(AuthRequiredApiView):
             return JsonResponse({'error': 'Invalid JSON format'}, status=400)
 
     
+class ItemCategoryReportByDate(AuthRequiredApiView):
+    def post(self, request):
+        try:
+            json_data = json.loads(request.body.decode('utf-8'))
+
+            from_date = json_data.get('from_date', '')
+            end_date = json_data.get('end_date', '')
+
+            from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+
+            purchase_lines = PurchaseLine.objects.filter(
+                purchase__created_at__gte=from_date,
+                purchase__created_at__lte=end_date,
+            ).values(
+                "item__category_id",
+                "item__category__name",
+            ).annotate(
+                total_quantity=Sum("quantity"), 
+                total_amount=Sum("amount")
+            )
+
+            return Response(list(purchase_lines))
+            
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+
 
 
 

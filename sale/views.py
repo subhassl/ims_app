@@ -4,7 +4,11 @@ from django.db import transaction
 from master.views import AuthRequiredApiView
 from inventory.models import ItemStock 
 from .models import Sale, SaleLine
-from agent.models import Agent 
+from agent.models import Agent
+import json
+from django.db.models import Q
+import datetime
+from django.db.models import Sum, F 
 
 
 
@@ -83,6 +87,65 @@ class Listsale(AuthRequiredApiView):
         sale_list = Sale.objects.all().values('id', 'interactor__name', 'created_at', 'created_by','total_quantity', 'total_amount', )
        
         return Response(sale_list)
+
+
+class ItemCategoryReportByDate(AuthRequiredApiView):
+    def post(self, request):
+        try:
+            json_data = json.loads(request.body.decode('utf-8'))
+
+            from_date = json_data.get('from_date', '')
+            end_date = json_data.get('end_date', '')
+
+            from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+
+            sale_line = SaleLine.objects.filter(
+                sale__created_at__gte=from_date,
+                sale__created_at__lte=end_date
+            ).values(
+                category_id=F("item__category_id"),
+                category_name=F("item__category__name"),
+                agent_name=F("sale__agent__name")
+            ).annotate(
+                totol_quantity=Sum("quantity"),
+                total_amount=Sum("amount")
+            )
+
+            return Response(list(sale_line))
+            
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+        
+
+class CustomerReportByDate(AuthRequiredApiView):
+    def post(self, request):
+        try:
+            json_data = json.loads(request.body.decode('utf-8'))
+
+            from_date = json_data.get('from_date', '')
+            end_date = json_data.get('end_date', '')
+
+            from_date = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+
+            sale = Sale.objects.filter(
+                Q(created_at__gte=from_date) &
+                Q(created_at__lte=end_date)
+            ).values(
+                'interactor_id','interactor__name', 
+            ).annotate(
+                total_quantity=Sum('total_quantity'),
+                total_amount=Sum('total_amount')
+            )
+
+            return Response(list(sale))
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+
+
+
 
 
 
