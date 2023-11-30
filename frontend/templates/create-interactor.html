@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <style>
+    body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #interactor-form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+        }
+
+        input {
+            padding: 8px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+  </style>
+  <body>
+    <div id='interactor-form-container'>
+        <h2>Create Interactor</h2>
+        <form id="interactorForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="phone_number">Phone Number:</label>
+            <input type="text" id="phone_number" name="phone_number" required>
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
+
+            <button type="button" onclick="submitInteractor()">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    // Submit interactor form
+    {% comment %}  function is responsible for collecting the user-inputted data from the form fields 
+    and organizing it into a JavaScript object (formData). {% endcomment %}
+    async function submitInteractor() {
+        var formData = {
+            name: document.getElementById('name').value,
+            phone_number: document.getElementById('phone_number').value,
+            address: document.getElementById('address').value,
+        };
+
+
+        try {
+            const csrfToken = getCookie('csrftoken'); // Get CSRF token from cookie
+
+
+            const response = await fetch("/api/master/create-interactor/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json", 
+                    "X-CSRFToken": csrfToken,
+                },
+                
+                body: JSON.stringify(formData), 
+            });
+
+
+            const result = await response.json();
+            console.log("Success:", result);
+
+            
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+    </script>  
+  </body>
+</html>
+

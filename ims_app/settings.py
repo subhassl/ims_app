@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'purchase',
     'sale',
     'agent',
+    'frontend',
     'rest_framework',
     'rest_framework.authtoken',
 

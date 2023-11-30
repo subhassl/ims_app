@@ -130,10 +130,10 @@ class CustomerReportByDate(AuthRequiredApiView):
             end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
 
             sale = Sale.objects.filter(
-                Q(created_at__gte=from_date) &
-                Q(created_at__lte=end_date)
+                created_at__gte=from_date,
+                created_at__lte=end_date
             ).values(
-                'interactor_id','interactor__name', 
+                'interactor_id', interactor_name=F('interactor__name'), 
             ).annotate(
                 total_quantity=Sum('total_quantity'),
                 total_amount=Sum('total_amount')

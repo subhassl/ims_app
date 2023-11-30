@@ -1,13 +1,17 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .models import ItemCategory, Item, Interactor
 from .functions import getInteractorsFromDB, getItemsFromDB
+from django.shortcuts import render
+
+import time
+
 
 class AuthRequiredApiView(APIView):
-    authentication_classes = [TokenAuthentication]  # Specify the authentication class
+    authentication_classes = [TokenAuthentication, SessionAuthentication]  # Specify the authentication class
     permission_classes = [IsAuthenticated]  # Specify the permission class
 
 
@@ -15,6 +19,7 @@ class InteractorView(AuthRequiredApiView):
 
     def get(self, request):
         intercators = getInteractorsFromDB()
+        time.sleep(2)
         res_dict = {
             "values": list(intercators),
             "count": intercators.count(),

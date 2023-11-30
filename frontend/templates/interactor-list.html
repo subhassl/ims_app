@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Interactors</title>
+  </head>
+  <style>
+    #interactors-list-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        p {
+            margin: 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+  </style>
+
+  <body>
+    <div id='interactors-list-container'>
+        <h2>Interactors List</h2>
+    <script>
+        // Fetch and display interactors
+        fetch("/api/master/interactors")
+        // Parse the response as JSON, This callback converts the response object (resp) to JSON format using the json() method.
+        // This assumes that the server responds with JSON data.
+            .then((resp) => resp.json())
+            // Handle the JSON data
+            .then((data) => {
+                // Initialize an empty string to store HTML content
+                let interactorsHTML = "";
+                console.log(data)
+
+                // Iterate through each interactor in the "values" array of the received data
+                for (let interactor of data["values"]) {
+                    // Build HTML content for each interactor, including its name
+                    interactorsHTML += "<p><b>Name:</b>" + interactor["name"] + "</p>";
+                }
+
+                // Set the HTML content in the "interactors-list-container" element
+                document.getElementById("interactors-list-container").innerHTML = interactorsHTML;
+        });
+    </script>  
+    
+  </body>
+</html>
