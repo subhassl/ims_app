@@ -1,7 +1,7 @@
 from .models import Interactor, Item
 
 def getInteractorsFromDB():
-    intercators = Interactor.objects.filter(is_active=True).values('id', 'name')
+    intercators = Interactor.objects.filter(is_active=True).values('id', 'name', 'phone_number', 'address')
     return intercators
 
 

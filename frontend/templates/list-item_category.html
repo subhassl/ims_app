@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Your Bootstrap Project</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <!-- Your custom styles (if any) -->
+    <style>
+        /* Add your custom styles here */
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+      <h2> Item Category List </h2>
+      <div class="border p-sm-3 text-dark rounded bg-light">
+        <div class="text-center">
+          <table class='table'>
+            <thead class='thead-light'>
+              <tr>
+                <th>Id</th>
+                <th>Name</th>              
+              </tr>
+            </thead>
+            <tbody id="itemCategory-list-container">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function fetchItemCategory() {
+            const response = await fetch('/api/master/item-categories');
+            const data = await response.json();
+            let item_categoryHTML = "";
+            for (let ic of data["valus"]) {
+                const id = ic["id"] || 'N/A';
+                const name = ic["name"] || 'N/A';
+                item_categoryHTML += `<tr><td>${id}</td><td>${name}</td></tr>`;
+            }
+
+            document.getElementById("itemCategory-list-container").innerHTML = item_categoryHTML;  
+        }
+
+        fetchItemCategory();
+       
+    </script>
+</body>
+</html>

@@ -5,3 +5,6 @@ def interactor_list(request):
 
 def create_interactor(request):
     return render(request, 'create-interactor.html')
+
+def list_itemCategory(request):
+    return render(request, 'list-item_category.html')

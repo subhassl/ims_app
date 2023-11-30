@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from .models import ItemCategory, Item, Interactor
 from .functions import getInteractorsFromDB, getItemsFromDB
 from django.shortcuts import render
-
 import time
 
 
@@ -19,7 +18,7 @@ class InteractorView(AuthRequiredApiView):
 
     def get(self, request):
         intercators = getInteractorsFromDB()
-        time.sleep(2)
+        
         res_dict = {
             "values": list(intercators),
             "count": intercators.count(),

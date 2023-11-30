@@ -10,46 +10,70 @@
 
     <title>Interactors</title>
   </head>
-  <style>
-    #interactors-list-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
-        }
-
-        p {
-            margin: 0;
-            padding: 8px 0;
-            border-bottom: 1px solid #ddd;
-        }
-  </style>
+  
 
   <body>
-    <div id='interactors-list-container'>
-        <h2>Interactors List</h2>
+    <div class="container mt-5">
+      <h2> Interactors List </h2>
+      <div class="border p-sm-3 text-dark rounded bg-light">
+        <div class="text-center">
+          <table class='table'>
+            <thead class='thead-light'>
+              <tr>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Address</th>
+              </tr>
+            </thead>
+            <tbody id="interactors-list-container">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Fetch and display interactors
-        fetch("/api/master/interactors")
-        // Parse the response as JSON, This callback converts the response object (resp) to JSON format using the json() method.
-        // This assumes that the server responds with JSON data.
-            .then((resp) => resp.json())
-            // Handle the JSON data
-            .then((data) => {
-                // Initialize an empty string to store HTML content
-                let interactorsHTML = "";
-                console.log(data)
+        async function fetchDataAndRenderTable() {
+          try {
+              // Fetch data from the server
+              const response = await fetch("/api/master/interactors");
 
-                // Iterate through each interactor in the "values" array of the received data
-                for (let interactor of data["values"]) {
-                    // Build HTML content for each interactor, including its name
-                    interactorsHTML += "<p><b>Name:</b>" + interactor["name"] + "</p>";
-                }
+              // Check if the response status is OK (200)
+              if (!response.ok) {
+                  throw new Error(`Error: ${response.status} - ${response.statusText}`);
+              }
 
-                // Set the HTML content in the "interactors-list-container" element
-                document.getElementById("interactors-list-container").innerHTML = interactorsHTML;
-        });
+              // Parse the response as JSON
+              const data = await response.json();
+
+              // Initialize an empty string to store HTML content
+              let interactorsHTML = " ";
+             
+
+              for (let interactor of data["values"]) {
+                  // Check if the properties exist before accessing them
+                  const name = interactor["name"] || "N/A";
+                  const phoneNumber = interactor["phone_number"] || "N/A";
+                  const address = interactor["address"] || "N/A";
+
+                  // Build HTML rows for each interactor
+                  interactorsHTML += `<tr><td>${name}</td><td>${phoneNumber}</td><td>${address}</td></tr>`;
+              }
+
+              
+
+              // Set the HTML content in the "interactors-list-container" element
+              document.getElementById("interactors-list-container").innerHTML = interactorsHTML;
+        } catch (error) {
+            console.error("Error fetching data:", error.message);
+            // Handle the error as needed (e.g., show an error message to the user)
+        }
+}
+
+// Call the asynchronous function
+fetchDataAndRenderTable();
+
     </script>  
     
   </body>
