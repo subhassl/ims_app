@@ -111,6 +111,8 @@ class RetrivePurchaseData(AuthRequiredApiView):
         return Response(purchase_dict)
 
 
+
+
 # repots based on data range
 
 class FetchPurchaseDataBasedOnDate(AuthRequiredApiView):

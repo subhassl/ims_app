@@ -110,6 +110,7 @@ class ItemCategoryView(AuthRequiredApiView):
 
 class ItemView(AuthRequiredApiView):
     def get(self, request):
+        # Returns all items in all categories.
         items = getItemsFromDB()
         res_dict = {
             "values": list(items)
@@ -138,6 +139,15 @@ class UpdateItem(AuthRequiredApiView):
             "name": item.name
         })
 
+class ListItemsInCategory(AuthRequiredApiView):
+    def get(self, request):
+        category_id = request.GET.get('category_id')
+        item = Item.objects.filter(
+            category_id=category_id
+        ).values('id', 'name', 'item_code',)
+        return Response({
+            "values" : item
+        })
 
 class UpdateInteractor(AuthRequiredApiView):
 

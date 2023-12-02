@@ -41,14 +41,25 @@
             for (let ic of data["valus"]) {
                 const id = ic["id"] || 'N/A';
                 const name = ic["name"] || 'N/A';
-                item_categoryHTML += `<tr><td>${id}</td><td>${name}</td></tr>`;
+                item_categoryHTML += `<tr><td><button type="Button" data-id="${id}" onclick="handleButtonClick('${id}')">${id}</button></td><td>${name}</td></tr>`;
             }
 
-            document.getElementById("itemCategory-list-container").innerHTML = item_categoryHTML;  
+            document.getElementById("itemCategory-list-container").innerHTML = item_categoryHTML;     
         }
 
         fetchItemCategory();
+
+        async function handleButtonClick(id) {
+          console.log(`Button with ID ${id} clicked!`);
+
+          const response = await fetch(`/api/master/list-items-in-category/?category_id=${id}`);
+          const data = await response.json();
+
+          console.log(data);
+          // Your button click logic here
+      }
        
     </script>
+    
 </body>
 </html>
