@@ -8,3 +8,6 @@ def create_interactor(request):
 
 def list_itemCategory(request):
     return render(request, 'list-item_category.html')
+
+def list_sale(request):
+    return render(request, 'list_sale.html')

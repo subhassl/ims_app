@@ -86,7 +86,9 @@ class Listsale(AuthRequiredApiView):
     def get(self, request):
         sale_list = Sale.objects.all().values('id', 'interactor__name', 'created_at', 'created_by','total_quantity', 'total_amount', )
        
-        return Response(sale_list)
+        return Response({
+            "values": sale_list
+        })
 
 
 class ItemCategoryReportByDate(AuthRequiredApiView):
@@ -106,7 +108,7 @@ class ItemCategoryReportByDate(AuthRequiredApiView):
             ).values(
                 category_id=F("item__category_id"),
                 category_name=F("item__category__name"),
-                agent_name=F("sale__agent__name")
+               
             ).annotate(
                 totol_quantity=Sum("quantity"),
                 total_amount=Sum("amount")

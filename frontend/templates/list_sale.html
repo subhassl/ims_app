@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Bootstrap Starter Pack</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Sales</h1>
+        <table class="table">
+            <tr>
+                <th>ID</th>
+               
+                <th>Interactor</th>
+                <th>Created_at</th>
+                <th>Created_by</th>
+                <th>Total_Quantity</th>
+                <th>Total_Amount</th>
+            </tr>
+            <tbody id = "sale-data">               
+            </tbody>
+        </table>
+    </div>
+    <div class="modal fade" id="saleDetailsModal" tabindex="-1" role="dialog" aria-labelledby="saleDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="saleDetailsModalLabel">Sale Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="saleDetailsBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        async function listSale() {
+            const response = await fetch('/api/sale/list-sale/');
+            const data = await response.json();
+            let listsale_HTML = '';
+            for (let sale of data["values"]) {
+                const id = sale["id"];
+                const name = sale["interactor__name"] || "N/A";
+                const created_at = sale["created_at"] || "N/A" ;
+                const formattedDate = created_at ? new Date(created_at).toLocaleDateString() : "N/A";
+                const created_by = sale["created_by"] || "N/A";
+                const total_quantity = sale["total_quantity"] || "N/A";
+                const total_amount = sale["total_amount"] || "N/A";
+
+
+                listsale_HTML += `<tr>
+                    <td>${id}</td>
+                    <td>${name}</td>
+                    <td>${formattedDate}</td>
+                    <td>${created_by}</td>
+                    <td>${total_quantity}</td>
+                    <td>${total_amount}</td>
+                    <td><button class="btn btn-primary" onclick="listsaledetails(${id})">View</button></td>
+            </tr>`;
+               
+            }
+
+            document.getElementById('sale-data').innerHTML = listsale_HTML;
+            
+        }
+        async function listsaledetails(sale_id) {
+            const response = await fetch(`/api/sale/get-single-sale/?sale_id=${sale_id}`);
+            const data = await response.json();
+
+            let salelines_HTML = '';
+
+            for (let line of data["sale_lines"]) {
+                const item_id = line["item_id"];
+                const item_name = line["item__name"];
+                const quantity = line["quantity"];
+                const rate = line["rate"];
+                const amount = line["amount"];
+
+                salelines_HTML += `<div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Item Details for the sale_id: ${sale_id}</h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item"><strong>ITEM_ID:</strong> ${item_id}</li>
+                                            <li class="list-group-item"><strong>Item Name:</strong> ${item_name}</li>
+                                            <li class="list-group-item"><strong>Quantity:</strong> ${quantity}</li>
+                                            <li class="list-group-item"><strong>Rate:</strong> ${rate}</li>
+                                            <li class="list-group-item"><strong>Amount:</strong> ${amount}</li>
+                                        </ul>
+                                    </div>
+                                </div>`;
+            document.getElementById('saleDetailsBody').innerHTML = salelines_HTML;
+            $('#saleDetailsModal').modal('show');
+            }  
+        }
+listSale();
+    </script>
+     
+</body>
+</html>
