@@ -58,39 +58,37 @@ class CreateSaleView(AuthRequiredApiView):
 
 # Get single Sale data
 
-class GetSingleSale(AuthRequiredApiView):
+class SaleView(AuthRequiredApiView):
     def get(self, request):
         sale_id = request.GET.get('sale_id')
-        sale = Sale.objects.get(id=sale_id)
-        sale_line = SaleLine.objects.filter(sale_id=sale_id).values('item_id', 'item__name', 'quantity', 'rate', 'amount',)
-        sale_dict = {
-            "id": sale.id,
-            "interactor":{
-                "id": sale.interactor.id,
-                "name": sale.interactor.name
-            },
-            "created_at": sale.created_at,
-            "created_by":{
-                "id": sale.created_by.id,
-                "name": sale.created_by.username
-            },
-            "sale_lines": sale_line,
-            "total_quantity": sale.total_quantity,
-            "total_amount": sale.total_amount        
-        }
+        if sale_id:
+            sale = Sale.objects.get(id=sale_id)
+            sale_line = SaleLine.objects.filter(sale_id=sale_id).values('item_id', 'item__name', 'quantity', 'rate', 'amount',)
+            sale_dict = {
+                "id": sale.id,
+                "interactor":{
+                    "id": sale.interactor.id,
+                    "name": sale.interactor.name
+                },
+                "created_at": sale.created_at,
+                "created_by":{
+                    "id": sale.created_by.id,
+                    "name": sale.created_by.username
+                },
+                "sale_lines": sale_line,
+                "total_quantity": sale.total_quantity,
+                "total_amount": sale.total_amount        
+            }
     
-        return Response(sale_dict)
+            return Response(sale_dict)
+        else:
+             # If sale_id is not provided, list all sales
+            sale_list = Sale.objects.all().values('id', 'interactor__name', 'created_at', 'created_by','total_quantity', 'total_amount',)
+            return Response({
+                "values": sale_list
+            })
 
-
-class Listsale(AuthRequiredApiView):
-    def get(self, request):
-        sale_list = Sale.objects.all().values('id', 'interactor__name', 'created_at', 'created_by','total_quantity', 'total_amount', )
-       
-        return Response({
-            "values": sale_list
-        })
-
-
+            
 class ItemCategoryReportByDate(AuthRequiredApiView):
     def post(self, request):
         try:
